@@ -20,7 +20,7 @@ pub struct MultisafepayAuthType {
 
 impl TryFrom<&types::ConnectorAuthType> for MultisafepayAuthType  {
     type Error = error_stack::Report<errors::ConnectorError>;
-    fn try_from(_auth_type: &types::ConnectorAuthType) -> Result<Self, Self::Error> {
+    fn try_from(item: &types::ConnectorAuthType) -> Result<Self, Self::Error> {
         if let types::ConnectorAuthType::HeaderKey { api_key } = item {
         Ok(Self {
             api_key: api_key.to_string(),
@@ -117,7 +117,7 @@ pub struct RefundResponse {
     pub object: String,
     pub amount: i64,
     pub currency: String,
-    pub metadata: StripeMetadata,
+
     pub payment_intent: String,
     pub status: RefundStatus,
 }
@@ -149,6 +149,14 @@ impl TryFrom<types::RefundsResponseRouterData<api::RSync, RefundResponse>> for t
     }
 }
 
+#[derive(Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+pub struct ErrorDetails {
+    pub code: Option<String>,
+    #[serde(rename = "type")]
+    pub error_type: Option<String>,
+    pub message: Option<String>,
+    pub param: Option<String>,
+}
 //TODO: Fill the struct with respective fields
 #[derive(Default, Debug, Serialize, Deserialize, PartialEq)]
 pub struct MultisafepayErrorResponse {
@@ -162,15 +170,15 @@ pub struct StripeShippingAddress {
     #[serde(rename = "shipping[address][country]")]
     pub country: Option<String>,
     #[serde(rename = "shipping[address][line1]")]
-    pub line1: Option<Secret<String>>,
+    pub line1: Option<String>,
     #[serde(rename = "shipping[address][line2]")]
-    pub line2: Option<Secret<String>>,
+    pub line2: Option<String>,
     #[serde(rename = "shipping[address][postal_code]")]
-    pub zip: Option<Secret<String>>,
+    pub zip: Option<String>,
     #[serde(rename = "shipping[address][state]")]
-    pub state: Option<Secret<String>>,
+    pub state: Option<String>,
     #[serde(rename = "shipping[name]")]
-    pub name: Option<Secret<String>>,
+    pub name: Option<String>,
     #[serde(rename = "shipping[phone]")]
-    pub phone: Option<Secret<String>>,
+    pub phone: Option<String>,
 }
